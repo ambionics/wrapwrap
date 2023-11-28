@@ -48,6 +48,11 @@ Requires ten (https://github.com/cfreal/ten).
 - Add option to gzip/bzip contents
 - Add start parameter that decides how many bytes to discard.
 - Improve alignment requirements to make nb_bytes not have to be divisible by 9
+
+ACKNOWLEDGEMENT
+
+This is based on the work of many individuals, the most recent being
+https://github.com/synacktiv/php_filter_chain_generator by remsio.
 """
 
 from ten import *
