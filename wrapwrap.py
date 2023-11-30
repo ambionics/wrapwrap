@@ -70,7 +70,7 @@ from dataclasses import dataclass
 @arg("output", "File to write the payload to. Defaults to chain.txt")
 @arg("padding_character", "Character to pad the prefix and suffix. Defaults to `M`.")
 @dataclass
-class Generator:
+class WrapWrap:
     """Generates a php://filter wrapper that adds a prefix and a suffix to the contents of a file.
 
     Example:
@@ -332,4 +332,4 @@ QPE = "convert.quoted-printable-encode"
 REMOVE_EQUAL = "convert.iconv.855.UTF7"
 SWAP4 = "convert.iconv.UCS-4.UCS-4LE"
 
-Generator()
+WrapWrap()
