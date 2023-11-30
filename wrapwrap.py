@@ -52,6 +52,8 @@ Requires ten (https://github.com/cfreal/ten).
 
 ACKNOWLEDGEMENT
 
+Built by cfreal.
+
 This is based on the work of many individuals, the most recent being
 https://github.com/synacktiv/php_filter_chain_generator by remsio.
 """
