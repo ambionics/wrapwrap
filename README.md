@@ -49,3 +49,13 @@ This produces:
 ```xml
 <root><name>root:x:0:0:root:/root:/bin/bash=0Adaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin=0Abin:x:...</name></root>
 ```
+
+# Previous work
+
+As mentioned in [the blogpost](https://www.ambionics.io/blog/wrapwrap-php-filters-suffix), this tool could not have been made without the previous work of other people such as (*but not limited to*):
+
+- [Surprising CTF task solution using php://filter](https://gynvael.coldwind.pl/?id=671) by gynvael
+- [Solving "includer's revenge" from hxp ctf 2021 without controlling any files](https://gist.github.com/loknop/b27422d355ea1fd0d90d6dbc1e278d4d) by loknop
+- [PHP filters chain: what is it and how to use it](https://www.synacktiv.com/en/publications/php-filters-chain-what-is-it-and-how-to-use-it) by remsio
+- [DownUnderCTF 2022 minimal-php solution and write up](https://github.com/DownUnderCTF/Challenges_2022_Public/blob/main/web/minimal-php/solve/solution.py) by hash_kitten
+- [PHP filters chain: file read from error based oracle](https://www.synacktiv.com/en/publications/php-filter-chains-file-read-from-error-based-oracle) by remsio
