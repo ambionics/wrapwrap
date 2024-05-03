@@ -110,7 +110,7 @@ class WrapWrap:
             self.postlude()
         else:
             if self.nb_bytes:
-                msg_warning(f"Ignoring [i]--nb-bytes[/] value since there is no suffix")
+                msg_warning(f"Ignoring [i]nb_bytes[/] value since there is no suffix")
             self.add_simple_prefix()
 
         filters = "|".join(self.filters)
