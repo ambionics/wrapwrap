@@ -109,6 +109,8 @@ class WrapWrap:
             self.add_prefix()
             self.postlude()
         else:
+            if self.nb_bytes:
+                msg_warning(f"Ignoring [i]--nb-bytes[/] value since there is no suffix")
             self.add_simple_prefix()
 
         filters = "|".join(self.filters)
@@ -143,7 +145,7 @@ class WrapWrap:
             c = bytes((c,))
         return self / self.conversions[c] / B64D / B64E
 
-    def push_char_safely(self, c: str) -> None:
+    def push_char_safely(self, c: bytes) -> None:
         self.push_char(c) / REMOVE_EQUAL
 
     def pad(self) -> None:
@@ -189,7 +191,7 @@ class WrapWrap:
         self.align()
         self / "convert.iconv.437.UCS-4le"
 
-    def add3_swap(self, triplet: bytes):
+    def add3_swap(self, triplet: bytes) -> None:
         assert len(triplet) == 3, f"add3 called with: {triplet}"
         b64 = self.b64e(triplet)
         self / B64E
@@ -200,7 +202,7 @@ class WrapWrap:
         self / B64D
         self / SWAP4
 
-    def b64e(self, value: str, strip: bool = False) -> bytes:
+    def b64e(self, value: bytes, strip: bool = False) -> bytes:
         value = tf.base64.encode(value)
         if strip:
             while value.endswith("="):
@@ -243,7 +245,7 @@ class WrapWrap:
             + 7
             + len(prefix)
         )
-        chunk_header = self.align_left(f"{size:x}\n".encode(), 3, b"0")
+        chunk_header = self.align_left(f"{size:x}\n".encode(), 3, "0")
         b64 = self.b64e(chunk_header + prefix)
         for char in reversed(b64):
             self.push_char_safely(char)
@@ -251,7 +253,7 @@ class WrapWrap:
     def postlude(self) -> None:
         self / B64D / "dechunk" / B64D / B64D
 
-    def set_lsbs(self, chunk: str) -> str:
+    def set_lsbs(self, chunk: bytes) -> bytes:
         """Sets the two LS bits of the given chunk, so that the caracter that comes
         after is not ASCII, and thus not a valid B64 char. A double decode would
         therefore "remove" that char.
@@ -261,7 +263,7 @@ class WrapWrap:
         index = alphabet.find(char)
         return chunk[:2] + alphabet[index + 3: index + 3 + 1]
 
-    def align_right(self, input_str: str, n: int, p: str = None) -> bytes:
+    def align_right(self, input_str: bytes, n: int, p: str = None) -> bytes:
         """Aligns the input string to the right to make its length divisible by n, using
         the specified pad character.
         """
@@ -272,11 +274,12 @@ class WrapWrap:
 
         return aligned_str
 
-    def align_left(self, input_str: str, n: int, p: str = None) -> bytes:
+    def align_left(self, input_str: bytes, n: int, p: str = None) -> bytes:
         """Aligns the input string to the left to make its length divisible by n, using
         the specified pad character.
         """
         p = p or self.padding_character
+        p = p.encode()
         aligned_str = input_str.rjust(self.align_value(len(input_str), n), p)
 
         return aligned_str
