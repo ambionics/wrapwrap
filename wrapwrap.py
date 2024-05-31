@@ -93,8 +93,8 @@ class WrapWrap:
 
     def run(self) -> None:
         if self.from_file:
-            self.prefix = read_bytes(self.prefix)
-            self.suffix = read_bytes(self.suffix)
+            self.prefix = self.prefix and read_bytes(self.prefix)
+            self.suffix = self.suffix and read_bytes(self.suffix)
         else:
             self.prefix = self.prefix.encode()
             self.suffix = self.suffix.encode()
