@@ -41,6 +41,7 @@ To solve the second example:
 # REQUIREMENTS
 
 Requires ten (https://github.com/cfreal/ten).
+$ pip install ten
 
 # IMPROVEMENTS
 
